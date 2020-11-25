@@ -1,10 +1,12 @@
 import { User } from "../../entities/User";
+import { IMailProvider } from "../../providers/IMailProvider";
 import { IUsersRepository } from "../../repositories/IUsersRepository";
 import { CreateUserRequestDTO } from "./createUserDTO";
 
 export class createUserCase {
     constructor(
-        private userRepository: IUsersRepository
+        private userRepository: IUsersRepository,
+        private mailProvider: IMailProvider
     ){}
 
 
@@ -18,5 +20,18 @@ export class createUserCase {
         const user = new User(data);
 
         await this.userRepository.save(user)
+
+        this.mailProvider.sendEMail({
+            to: {
+                name: data.name,
+                email: data.email
+            },
+            from: {
+                name: 'Gabriel',
+                email: 'typesriptTesteApi@gmail.com'
+            },
+            subject: 'Seja bem vindo ao meu teste de api com node',
+            body: '<p> Salve salve alejandro </p>'
+        })
     }
 }
